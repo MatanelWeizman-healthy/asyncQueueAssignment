@@ -74,7 +74,7 @@ module.exports = class MessageBroker {
     }
 
     /**
-     * close all active connection
+     * close all active connections
      */
     async close() {
         try {
