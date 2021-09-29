@@ -1,0 +1,16 @@
+version: "3.9"
+services:
+    rabbitmq3:
+        image: rabbitmq:3.8-management-alpine
+        ports:
+            - '15672:15672'
+        healthcheck:
+            test: [ "CMD", "nc", "-z", "rabbitmq3", "5672" ]
+            interval: 5s
+            timeout: 15s
+            retries: 10
+    async-queue:
+        build: .
+        restart: on-failure
+        depends_on:
+        - rabbitmq3

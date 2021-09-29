@@ -5,7 +5,7 @@
   "main": "app.js",
   "scripts": {
     "start": "node -r dotenv/config app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +13,9 @@
   "dependencies": {
     "amqplib": "^0.8.0",
     "dotenv": "^10.0.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.0.2",
+    "jest": "^27.2.3"
   }
 }
