@@ -13,6 +13,19 @@
             ],
             "program": "${workspaceFolder}/app.js",
             "envFile": "${workspaceFolder}/.env"
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Jest single run all tests",
+            "program": "${workspaceRoot}/node_modules/jest/bin/jest.js",
+            "args": [
+                "--verbose",
+                "-i",
+                "--no-cache"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
+        },
     ]
 }

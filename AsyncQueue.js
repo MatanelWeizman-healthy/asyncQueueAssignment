@@ -22,9 +22,21 @@ module.exports = class AsyncQueue {
                 bufferedMessage: Buffer.from(JSON.stringify(argumentsAsObject)),
                 handler: this.asyncFunc
             });
+
         } catch (error) {
             console.error(error.message);
             process.exit(1);
+        }
+    }
+
+    /**
+     * terminate the asyncQueue
+     */
+    async terminate() {
+        try {
+            await this.broker.close();
+        } catch (error) {
+            throw(error);
         }
     }
 }

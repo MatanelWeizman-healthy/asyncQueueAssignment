@@ -7,6 +7,7 @@ module.exports = class MessageBroker {
     constructor() {
         this.channel = null;
         this.connection = null;
+        this.connections = [];
         this.queue = process.env.QUEUE_NAME;
         this.exchange = process.env.EXCHANGE_NAME;
         this.routingKey = 'routing-key';
@@ -17,7 +18,9 @@ module.exports = class MessageBroker {
      */
     async init() {
         try {
-            this.connection = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://localhost');
+            const connection = await amqp.connect(process.env.RABBITMQ_URL || 'amqp://localhost');
+            this.connections.push(connection);
+            this.connection = connection;
             this.channel = await this.connection.createChannel();
             await this.channel.assertExchange(this.exchange, 'direct', { durable: true })
             await this.channel.assertQueue(this.queue, { durable: true });
@@ -60,9 +63,9 @@ module.exports = class MessageBroker {
      */
     async consume({ handler }) {
         try {
-            await this.channel.consume(this.queue, (message) => {
+            await this.channel.consume(this.queue, async (message) => {
                 const parsedMessage = JSON.parse(message.content.toString());
-                handler(parsedMessage.identifier, ...parsedMessage.args);
+                await handler(parsedMessage.identifier, ...parsedMessage.args);
                 this.channel.ack(message);
             })
         } catch (error) {
@@ -70,4 +73,17 @@ module.exports = class MessageBroker {
         }
     }
 
+    /**
+     * close all active connection
+     */
+    async close() {
+        try {
+            this.connections.forEach(async (connection) => {
+               await connection.close();
+            });
+
+        } catch (error) {
+            throw new Error(`Error in channel and collection closing: ${error.message}`);
+        }
+    }
 }
